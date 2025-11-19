@@ -52,6 +52,6 @@ class ComputerFacade:
 
 def main():
     computer = ComputerFacade()
-    computer.start()  # ← one simple call
+    computer.start()  #  one simple call
 
 main()

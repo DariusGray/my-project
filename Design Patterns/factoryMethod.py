@@ -44,8 +44,7 @@ def notifier_factory(method):
 
 def main():
     method = input("Choose method (email/sms): ")
-
-    notifier = notifier_factory(method)  # ← main doesn't know details
+    notifier = notifier_factory(method)  # main doesn't know details
     notifier.send("Hello there!")
 
 main()
