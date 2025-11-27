@@ -1,6 +1,7 @@
 # ftp_client.py
 """
 Thin wrapper around ftplib.FTP to manage FTP connection and file operations.
+Acts as a Facade over the low-level FTP API.
 """
 
 import ftplib
@@ -27,7 +28,6 @@ class FTPClient:
             try:
                 self.ftp.quit()
             except Exception:
-                # Best-effort close
                 try:
                     self.ftp.close()
                 except Exception:
@@ -38,16 +38,11 @@ class FTPClient:
     def is_connected(self) -> bool:
         return self.ftp is not None
 
-    def list_csv_files(self) -> List[str]:
-        """
-        Return list of CSV files on the remote server.
-        Case-insensitive detection for .csv / .CSV / .Csv etc.
-        """
+    def list_files(self) -> List[str]:
         if self.ftp is None:
             raise RuntimeError("FTP client not connected")
 
-        files = self.ftp.nlst()
-        return [f for f in files if f.lower().endswith(".csv")]
+        return self.ftp.nlst()
 
     def download_file(self, remote_filename: str, local_path: str) -> None:
         """Download a file from the FTP server to the given local path."""

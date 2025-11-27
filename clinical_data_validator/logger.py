@@ -12,29 +12,35 @@ import uuid
 from datetime import datetime
 from typing import Iterable
 
-from config import ERROR_REPORT_PATH, PROCESSED_LOG_PATH
+from config import PROCESSED_LOG_PATH
 
 
-def log_error(filename: str, message: str) -> None:
+def _get_error_report_path(errors_dir: str) -> str:
+    """Return full path to error_report.log inside the given Errors directory."""
+    return os.path.join(errors_dir, "error_report.log")
+
+
+def log_error(filename: str, message: str, errors_dir: str) -> None:
     """
-    Append a single error entry to error_report.log.
+    Append a single error entry to error_report.log inside the given Errors directory.
     """
     timestamp = datetime.now().isoformat()
     guid = str(uuid.uuid4())
+    error_report_path = _get_error_report_path(errors_dir)
 
-    os.makedirs(os.path.dirname(ERROR_REPORT_PATH), exist_ok=True)
+    os.makedirs(os.path.dirname(error_report_path), exist_ok=True)
 
     line = f"{timestamp} | {guid} | {filename} | {message}\n"
-    with open(ERROR_REPORT_PATH, "a", encoding="utf-8") as f:
+    with open(error_report_path, "a", encoding="utf-8") as f:
         f.write(line)
 
 
-def log_errors(filename: str, messages: Iterable[str]) -> None:
+def log_errors(filename: str, messages: Iterable[str], errors_dir: str) -> None:
     """
     Convenience function to log multiple error messages for one file.
     """
     for msg in messages:
-        log_error(filename, msg)
+        log_error(filename, msg, errors_dir)
 
 
 def has_been_processed(filename: str) -> bool:
